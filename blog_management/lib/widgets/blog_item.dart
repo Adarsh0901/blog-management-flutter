@@ -1,4 +1,5 @@
 import 'package:blog_management/model/blog_model.dart';
+import 'package:blog_management/screens/blog_details.dart';
 // import 'package:blog_management/screens/blog_details.dart';
 import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
@@ -9,10 +10,12 @@ class BlogItem extends StatelessWidget {
   const BlogItem(
       {super.key,
         required this.data,
+        required this.option,
+        required this.getUpdatedData,
         });
   final Blog data;
-  // final FilterOption option;
-  // final void Function(FilterOption option) getUpdatedData;
+  final FilterOptions option;
+  final void Function(FilterOptions option) getUpdatedData;
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +37,16 @@ class BlogItem extends StatelessWidget {
         //   commonService.showOptions(tileKey, context, options);
         // },
         onTap: () async {
-          // await Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (ctx) => BlogDetails(id: data.id, title: data.title),
-          //   ),
-          // );
-          // getUpdatedData(option);
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => BlogDetails(id: data.id, title: data.title),
+            ),
+          );
+          getUpdatedData(option);
         },
         leading: SizedBox(
-          height: 60,
-          width: 60,
+          height: MediaQuery.of(context).size.height * 0.15,
+          width: MediaQuery.of(context).size.width * 0.15,
           child: GestureDetector(
             onTap: () {
               if (data.imageUrl.trim().isNotEmpty) {

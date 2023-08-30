@@ -10,7 +10,7 @@ class BaseService{
       builder: (ctx) {
         return AlertDialog(
           content: SizedBox(
-            width: width * 0.8,
+            width: width < 300 ? width*0.8 : 300,
             child: method == imageOptions.network ? Image.network(
               imageUrl,
               fit: BoxFit.fill,
@@ -42,6 +42,14 @@ class BaseService{
         );
       },
     );
+  }
+
+  double calculateRating(List reviews){
+    double rate = 0.0;
+    for(var i=0;i<reviews.length;i++){
+      rate += reviews[i]['rating'];
+    }
+    return rate/reviews.length;
   }
 
 

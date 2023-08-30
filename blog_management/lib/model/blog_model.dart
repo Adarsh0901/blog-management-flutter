@@ -15,7 +15,7 @@ class Blog {
   final String imageUrl;
   final double rate;
   final DateTime timeStamp;
-  final Review? reviews;
+  final List? reviews;
 }
 
 class Review {

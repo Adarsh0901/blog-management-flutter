@@ -15,7 +15,6 @@ class BlogList extends StatefulWidget {
 
 class _BlogListState extends State<BlogList> {
   late StreamController<List<Blog>> _blogStream;
-  final GlobalKey _filterKey = GlobalKey();
   final _apiService = ApiService();
   final _commonService = CommonServices();
   FilterOptions option = FilterOptions.none;
@@ -33,7 +32,6 @@ class _BlogListState extends State<BlogList> {
               author: item.value['author'],
               imageUrl: item.value['imageUrl'],
               timeStamp: DateTime.parse(item.value['timeStamp']),
-              reviews: item.value['review'],
               rate: item.value['rate'] ?? 0.0),
         );
       }
@@ -52,7 +50,7 @@ class _BlogListState extends State<BlogList> {
       PopupMenuItem(
         onTap: () {
           option = FilterOptions.ascending;
-          _applyFilter();
+          _applyFilter(option);
         },
         value: FilterOptions.ascending,
         child: const Text("A-Z alphabetically"),
@@ -60,7 +58,7 @@ class _BlogListState extends State<BlogList> {
       PopupMenuItem(
         onTap: () {
           option = FilterOptions.descending;
-          _applyFilter();
+          _applyFilter(option);
         },
         value: FilterOptions.descending,
         child: const Text("Z-A Alphabetically"),
@@ -68,7 +66,7 @@ class _BlogListState extends State<BlogList> {
       PopupMenuItem(
         onTap: () {
           option = FilterOptions.date;
-          _applyFilter();
+          _applyFilter(option);
         },
         value: FilterOptions.date,
         child: const Text("Date"),
@@ -78,7 +76,7 @@ class _BlogListState extends State<BlogList> {
     return items;
   }
 
-  void _applyFilter() async {
+  void _applyFilter(FilterOptions option) async {
     List<Blog> data = await _getData();
     if (option == FilterOptions.ascending) {
       data.sort((a, b) => a.title.compareTo(b.title));
@@ -88,6 +86,14 @@ class _BlogListState extends State<BlogList> {
       data.sort((a, b) => a.timeStamp.compareTo(b.timeStamp));
     }
     _blogStream.add(data);
+  }
+
+  void _removeBlog(Blog data) async {
+    try{
+      await _apiService.deleteImages(data.title, data.author);
+      await _apiService.deleteCall('$blogs/${data.id}');
+      _initializeData();
+    }catch(err){}
   }
 
   @override
@@ -110,8 +116,11 @@ class _BlogListState extends State<BlogList> {
               itemBuilder: (ctx) {
                 return _openFilterMenu();
               }),
-          IconButton(onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CreateBlogScreen()));
+          IconButton(onPressed: () async  {
+            final  data = await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CreateBlogScreen()));
+            if(data != null){
+              _initializeData();
+            }
           }, icon: const Icon(Icons.add))
         ],
       ),
@@ -130,41 +139,45 @@ class _BlogListState extends State<BlogList> {
             return const Center(child: Text('Something Went Wrong'));
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: snapshot.data?.length,
-            itemBuilder: (ctx, index) {
-              return Dismissible(
-                key: Key('item ${snapshot.data![index]}'),
-                background: Container(
-                  color: Colors.red,
-                  child: const Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          width: 8.0,
-                        ),
-                        Text('Move to bin',
-                            style: TextStyle(color: Colors.white)),
-                      ],
+          return RefreshIndicator(
+            onRefresh: ()async {_initializeData();},
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: snapshot.data?.length,
+              itemBuilder: (ctx, index) {
+                return Dismissible(
+                  key: Key('item ${snapshot.data![index]}'),
+                  background: Container(
+                    color: Colors.red,
+                    child: const Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 8.0,
+                          ),
+                          Text('Move to bin',
+                              style: TextStyle(color: Colors.white)),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                // onDismissed: (){
-                // },
-                confirmDismiss: (DismissDirection direction) async {
-                  return await _commonService.openDialog(context, 'Remove Blog',
-                      'Delete Blog ${snapshot.data![index].title} from list');
-                },
-                child: BlogItem(data: snapshot.data![index]),
-              );
-            },
+                  onDismissed: (direction){
+                    _removeBlog(snapshot.data![index]);
+                  },
+                  confirmDismiss: (DismissDirection direction) async {
+                    return await _commonService.openDialog(context, 'Remove Blog',
+                        'Delete Blog ${snapshot.data![index].title} from list');
+                  },
+                  child: BlogItem(data: snapshot.data![index], option: option, getUpdatedData: _applyFilter,),
+                );
+              },
+            ),
           );
         },
       ),

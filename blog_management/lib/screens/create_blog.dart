@@ -54,11 +54,11 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
       });
 
       try {
-        // final imageUrl = await _apiService.uploadImage(_selectedImage!, _title, _developedBy, 'post');
+        final imageUrl = await _apiService.uploadImages(_selectedImage!, _title, _developedBy);
         Map data = {
           'title': _title,
           'description': json.encode(_controller.document.toDelta().toJson()),
-          'imageUrl': '',
+          'imageUrl': imageUrl,
           'author': _developedBy,
           'timeStamp': _selectedDate!.toString(),
           'rate': 0.0
@@ -75,7 +75,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
           Navigator.of(context).pop(Blog(
               id: res['name'].toString(),
               title: _title,
-              imageUrl: '',
+              imageUrl: imageUrl,
               description: json.encode(_controller.document.toDelta().toJson()),
               author: _developedBy,
               timeStamp: _selectedDate!));
@@ -98,132 +98,134 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
         title: const Text('Add a new blog'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                UserImagePicker(
-                  onImagePicked: (pickedImage) {
-                    _selectedImage = pickedImage;
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Title',
-                    ),
-                    validator: (value) {
-                      final pattern = RegExp(r'^[a-zA-Z ]+$');
-                      if (value == null || value.isEmpty) {
-                        return 'Title must not be empty';
-                      } else if (!pattern.hasMatch(value)) {
-                        return 'Title should only be alphabetical';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _title = value!;
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  UserImagePicker(
+                    onImagePicked: (pickedImage) {
+                      _selectedImage = pickedImage;
                     },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Developed By',
-                    ),
-                    validator: (value) {
-                      final pattern = RegExp(r'^[a-zA-Z ]+$');
-                      if (value == null || value.isEmpty) {
-                        return 'Developed by must not be empty';
-                      } else if (!pattern.hasMatch(value)) {
-                        return 'Developed by should only be alphabetical';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _developedBy = value!;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    children: [
-                      QuillToolbar.basic(
-                        controller: _controller,
-                        showAlignmentButtons: true,
-                        showSearchButton: false,
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Title',
                       ),
-                      Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
+                      validator: (value) {
+                        final pattern = RegExp(r'^[a-zA-Z ]+$');
+                        if (value == null || value.isEmpty) {
+                          return 'Title must not be empty';
+                        } else if (!pattern.hasMatch(value)) {
+                          return 'Title should only be alphabetical';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _title = value!;
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Developed By',
+                      ),
+                      validator: (value) {
+                        final pattern = RegExp(r'^[a-zA-Z ]+$');
+                        if (value == null || value.isEmpty) {
+                          return 'Developed by must not be empty';
+                        } else if (!pattern.hasMatch(value)) {
+                          return 'Developed by should only be alphabetical';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _developedBy = value!;
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        QuillToolbar.basic(
+                          controller: _controller,
+                          showAlignmentButtons: true,
+                          showSearchButton: false,
+                        ),
+                        Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                            ),
+                          ),
+                          child: QuillEditor.basic(
+                            padding: const EdgeInsets.all(10),
+                            expands: true,
+                            autoFocus: false,
+                            controller: _controller,
+                            readOnly: false, // true for view only mode
                           ),
                         ),
-                        child: QuillEditor.basic(
-                          padding: const EdgeInsets.all(10),
-                          expands: true,
-                          autoFocus: false,
-                          controller: _controller,
-                          readOnly: false, // true for view only mode
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(_selectedDate == null
-                          ? 'No Date Selected'
-                          : _commonService.formatDate.format(_selectedDate!)),
-                      IconButton(
-                        onPressed: _openDatePicker,
-                        icon: const Icon(Icons.calendar_month),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: _isSaving
-                            ? null
-                            : () {
-                          _formKey.currentState!.reset();
-                          setState(() {
-                            _selectedDate = null;
-                            _controller = QuillController.basic();
-                          });
-                        },
-                        child: const Text('Reset'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _saveItem,
-                        child: _isSaving
-                            ? const SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(_selectedDate == null
+                            ? 'No Date Selected'
+                            : _commonService.formatDate.format(_selectedDate!)),
+                        IconButton(
+                          onPressed: _openDatePicker,
+                          icon: const Icon(Icons.calendar_month),
                         )
-                            : const Text('Save'),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: _isSaving
+                              ? null
+                              : () {
+                            _formKey.currentState!.reset();
+                            setState(() {
+                              _selectedDate = null;
+                              _controller = QuillController.basic();
+                            });
+                          },
+                          child: const Text('Reset'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _saveItem,
+                          child: _isSaving
+                              ? const SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(),
+                          )
+                              : const Text('Save'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

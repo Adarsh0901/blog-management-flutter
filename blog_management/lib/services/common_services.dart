@@ -15,7 +15,12 @@ class CommonServices extends BaseService{
     Map data = dataObj['data'];
     Map? resp ;
     try {
-      if (dataObj['method'] == 'post') {
+      if(dataObj['method'] == 'get') {
+        var response = await _dio.get(url).timeout(
+          const Duration(seconds: 20),
+        );
+        resp = response.data;
+      } else if (dataObj['method'] == 'post') {
         var response = await _dio
             .post(url,
             data: json.encode(data))
@@ -23,16 +28,16 @@ class CommonServices extends BaseService{
           const Duration(seconds: 20),
         );
         resp = response.data;
-      } else if(dataObj['method'] == 'get') {
-        var response = await _dio.get(url).timeout(
-          const Duration(seconds: 20),
-        );
-        resp = response.data;
-      }else if(dataObj['method'] == 'patch') {
+      } else if(dataObj['method'] == 'patch') {
         var response = await _dio
             .patch(url,
             data: json.encode(data))
             .timeout(
+          const Duration(seconds: 20),
+        );
+        resp = response.data;
+      }else if(dataObj['method'] == 'delete'){
+        var response = await _dio.delete(url).timeout(
           const Duration(seconds: 20),
         );
         resp = response.data;
