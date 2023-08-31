@@ -7,12 +7,12 @@ import 'package:blog_management/widgets/rating_star.dart';
 import 'package:flutter/material.dart';
 
 class BlogItem extends StatelessWidget {
-  const BlogItem(
-      {super.key,
-        required this.data,
-        required this.option,
-        required this.getUpdatedData,
-        });
+  const BlogItem({
+    super.key,
+    required this.data,
+    required this.option,
+    required this.getUpdatedData,
+  });
   final Blog data;
   final FilterOptions option;
   final void Function(FilterOptions option) getUpdatedData;
@@ -26,16 +26,34 @@ class BlogItem extends StatelessWidget {
       child: ListTile(
         key: tileKey,
         isThreeLine: true,
-        // onLongPress: () {
-        //   List<PopupMenuEntry> options = [
-        //     PopupMenuItem(
-        //         onTap: () {
-        //         },
-        //         child:const Text('Add to favorite')
-        //     ),
-        //   ];
-        //   commonService.showOptions(tileKey, context, options);
-        // },
+        onLongPress: () {
+          showModalBottomSheet(
+            enableDrag: true,
+              context: context,
+              builder: (ctx) {
+                return Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Text(
+                            data.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                        const ListTile(
+                          leading: Icon(Icons.favorite_border),
+                          title: Text('Add to Favorite'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        },
         onTap: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
@@ -58,8 +76,8 @@ class BlogItem extends StatelessWidget {
               foregroundImage: data.imageUrl.trim().isNotEmpty
                   ? NetworkImage(data.imageUrl)
                   : null,
-              backgroundColor: Colors.grey,
               radius: 40,
+              child: Text(data.title[0].toUpperCase()),
             ),
           ),
         ),

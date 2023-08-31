@@ -162,9 +162,9 @@ class _BlogDetailsState extends State<BlogDetails> {
                                 leading: SizedBox(
                                   height: MediaQuery.of(context).size.height * 0.13,
                                   width: MediaQuery.of(context).size.width * 0.13,
-                                  child: const CircleAvatar(
-                                      backgroundColor: Colors.grey,
+                                  child: CircleAvatar(
                                       radius: 40,
+                                    child: Text(_blogDetail!.reviews![index]['rTitle'][0]),
                                     ),
                                 ),
                                 title: Text(

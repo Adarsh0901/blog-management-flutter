@@ -5,6 +5,7 @@ import 'package:blog_management/services/api_services.dart';
 import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
 import 'package:blog_management/widgets/blog_item.dart';
+import 'package:blog_management/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class BlogList extends StatefulWidget {
@@ -92,7 +93,7 @@ class _BlogListState extends State<BlogList> {
     try{
       await _apiService.deleteImages(data.title, data.author);
       await _apiService.deleteCall('$blogs/${data.id}');
-      _initializeData();
+      _blogStream.add(await _getData());
     }catch(err){}
   }
 
@@ -124,6 +125,7 @@ class _BlogListState extends State<BlogList> {
           }, icon: const Icon(Icons.add))
         ],
       ),
+      drawer: const Drawers(),
       body: StreamBuilder(
         stream: _blogStream.stream,
         builder: (context, snapshot) {
