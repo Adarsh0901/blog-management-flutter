@@ -5,7 +5,7 @@ enum FilterOptions {
   none
 }
 
-enum imageOptions {
+enum ImageOptions {
   network,
   file
 }

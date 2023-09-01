@@ -45,20 +45,10 @@ class _BlogDetailsState extends State<BlogDetails> {
         );
       });
     } catch (err) {
-      print(err);
+      if (context.mounted) {
+        _commonService.showMessage(context, err.toString(), Colors.red);
+      }
     }
-  }
-
-  void _addReview()async {
-    await showModalBottomSheet(
-        useSafeArea: true,
-        showDragHandle: true,
-        isScrollControlled: true,
-        context: context,
-        builder: (ctx) {
-          return AddReview(id: _blogDetail!.id,reviews: _blogDetail!.reviews!,);
-        });
-    _loadData();
   }
 
   @override
@@ -75,130 +65,159 @@ class _BlogDetailsState extends State<BlogDetails> {
 
     if (_blogDetail != null) {
       content = SingleChildScrollView(
-          child: RefreshIndicator(
-            onRefresh: ()async{_loadData();},
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 200,
-                      child: Center(
-                          child: _blogDetail!.imageUrl.trim().isNotEmpty
-                              ? Image.network(_blogDetail!.imageUrl)
-                              : const Text('No Image Found')),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: QuillEditor.basic(
-                        controller: _controller,
-                        readOnly: true,
-                        autoFocus: false,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          const Text('Posted By: '),
-                          Expanded(child: Text(_blogDetail!.author)),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          const Text('Posted on: '),
-                          Expanded(
-                              child: Text(_commonService.formatDate
-                                  .format(_blogDetail!.timeStamp))),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Rating(
-                          isDisable: true,
-                          rating: _blogDetail!.rate,
-                        )),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            _loadData();
+          },
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
                       child: Text(
-                        'Comments:',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        _blogDetail!.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 200,
+                    child: Center(
+                        child: _blogDetail!.imageUrl.trim().isNotEmpty
+                            ? Image.network(_blogDetail!.imageUrl)
+                            : const Text('No Image Found')),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: QuillEditor.basic(
+                      controller: _controller,
+                      readOnly: true,
+                      autoFocus: false,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        const Text('Posted By: '),
+                        Expanded(child: Text(_blogDetail!.author)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        const Text('Posted on: '),
+                        Expanded(
+                            child: Text(_commonService.formatDate
+                                .format(_blogDetail!.timeStamp))),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Rating(
+                        isDisable: true,
+                        rating: _blogDetail!.rate,
+                      )),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Comments:',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          await _commonService.openBottomModalSheet(
+                              context,
+                              AddReview(
+                                id: _blogDetail!.id,
+                                reviews: _blogDetail!.reviews!,
+                              ));
+                          _loadData();
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Comments'),
+                      ),
+                    ),
+                  ),
+                  if (_blogDetail!.reviews != null)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton.icon(
-                          onPressed: _addReview,
-                          icon: const Icon(Icons.add),
-                          label: const Text('Add Comments'),
-                        ),
-                      ),
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _blogDetail!.reviews!.length,
+                          itemBuilder: (ctx, index) {
+                            return ListTile(
+                              isThreeLine: true,
+                              leading: SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.13,
+                                width: MediaQuery.of(context).size.width * 0.13,
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  child: Text(_blogDetail!.reviews![index]
+                                      ['rTitle'][0]),
+                                ),
+                              ),
+                              title: Text(
+                                _blogDetail!.reviews![index]['rTitle'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(_blogDetail!.reviews![index]
+                                      ['rDescription']),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(_commonService.formatDate.format(
+                                      DateTime.parse(_blogDetail!
+                                          .reviews![index]['rTimeStamp']))),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Rating(
+                                    isDisable: true,
+                                    rating: _blogDetail!.reviews![index]
+                                        ['rating'],
+                                  )
+                                ],
+                              ),
+                            );
+                          }),
                     ),
-                    if (_blogDetail!.reviews != null)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: _blogDetail!.reviews!.length,
-                            itemBuilder: (ctx, index) {
-                              return ListTile(
-                                isThreeLine: true,
-                                leading: SizedBox(
-                                  height: MediaQuery.of(context).size.height * 0.13,
-                                  width: MediaQuery.of(context).size.width * 0.13,
-                                  child: CircleAvatar(
-                                      radius: 40,
-                                    child: Text(_blogDetail!.reviews![index]['rTitle'][0]),
-                                    ),
-                                ),
-                                title: Text(
-                                  _blogDetail!.reviews![index]['rTitle'],
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        _blogDetail!.reviews![index]['rDescription']),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Text(
-                                        _commonService.formatDate.format(DateTime.parse(_blogDetail!.reviews![index]['rTimeStamp']))),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Rating(
-                                      isDisable: true,
-                                      rating: _blogDetail!.reviews![index]['rating'],
-                                    )
-                                  ],
-                                ),
-                              );
-                            }),
-                      ),
-                  ],
-                ),
+                ],
               ),
             ),
           ),
-        );
+        ),
+      );
     }
     return Scaffold(
         appBar: AppBar(

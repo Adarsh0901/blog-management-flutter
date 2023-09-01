@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:blog_management/services/base_services.dart';
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
@@ -46,17 +45,6 @@ class CommonServices extends BaseService{
       // print(err);
     }
     return resp!;
-  }
-
-  void showMessage(context,String msg, Color color) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: color,
-        showCloseIcon: true,
-        content: Text(msg),
-      ),
-    );
   }
 
 }

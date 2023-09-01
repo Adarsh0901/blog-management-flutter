@@ -16,40 +16,42 @@ class AddReview extends StatefulWidget {
 }
 
 class _AddReview extends State<AddReview> {
-  final _formKey = GlobalKey<FormState>();
   final _apiService = ApiService();
   final _commonService = CommonServices();
-  bool _isSaving = false;
-  var _name = '';
-  var _review = '';
+  final _reviewFormKey = GlobalKey<FormState>();
+  String _name = '';
+  String _review = '';
   double _rate = 0.0;
+  bool _isSaving = false;
 
   void _saveItem() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (_reviewFormKey.currentState!.validate()) {
+      _reviewFormKey.currentState!.save();
       try {
         setState(() {
           _isSaving = true;
         });
         var review = {
           'rTitle': _name,
-          'rDescription' : _review,
+          'rDescription': _review,
           'rTimeStamp': DateTime.now().toString(),
           'rating': _rate
         };
+
         widget.reviews.add(review);
-        double averageRating = _commonService.calculateRating(widget.reviews);
         Map reviewData = {'reviews': widget.reviews};
-        Map rateData = {
-          'rate': averageRating
-        };
-        var response = await _apiService.patchCall(reviewData, '$blogs/${widget.id}');
-        await _apiService.patchCall(rateData, '$blogs/${widget.id}');
-        if(response != null){
+        var response =
+            await _apiService.patchCall(reviewData, '$blogs/${widget.id}');
+        _updateRating();
+        if (response['rTitle'] != null) {
           setState(() {
             _isSaving = false;
           });
-          Navigator.of(context).pop(rateData);
+
+          if (context.mounted) {
+            _commonService.showMessage(context, 'Review Added', Colors.green);
+            Navigator.of(context).pop({'isAdded': true});
+          }
         }
       } catch (err) {
         setState(() {
@@ -57,6 +59,25 @@ class _AddReview extends State<AddReview> {
         });
       }
     }
+  }
+
+  void _updateRating() async {
+    try {
+      double averageRating = _commonService.calculateRating(widget.reviews);
+      Map rateData = {'rate': averageRating};
+      await _apiService.patchCall(rateData, '$blogs/${widget.id}');
+    } catch (err) {
+      if (context.mounted) {
+        _commonService.showMessage(context, err.toString(), Colors.red);
+      }
+    }
+  }
+
+  void _resetFields() {
+    _reviewFormKey.currentState!.reset();
+    setState(() {
+      _rate = 0.0;
+    });
   }
 
   @override
@@ -69,7 +90,7 @@ class _AddReview extends State<AddReview> {
             left: 10,
             right: 10),
         child: Form(
-          key: _formKey,
+          key: _reviewFormKey,
           child: Column(
             children: [
               const Padding(
@@ -137,11 +158,7 @@ class _AddReview extends State<AddReview> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: _isSaving
-                          ? null
-                          : () {
-                              _formKey.currentState!.reset();
-                            },
+                      onPressed: _isSaving ? null : _resetFields,
                       child: const Text('Reset'),
                     ),
                     ElevatedButton(

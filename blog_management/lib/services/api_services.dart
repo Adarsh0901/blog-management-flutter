@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -48,7 +47,6 @@ class ApiService {
       var resp = await _commonService.fetchData(dataObj);
       return resp;
     } catch (err) {
-      print(err);
       return {err: err.toString()};
     }
   }
@@ -80,10 +78,10 @@ class ApiService {
     } catch (err) {
       return err.toString();
     }
-    return imageUrl!;
+    return imageUrl;
   }
 
-  Future<void> deleteImages(String title, String author) async {
+  Future<String> deleteImages(String title, String author) async {
     try {
       final storageRef = FirebaseStorage.instance
           .ref()
@@ -91,7 +89,8 @@ class ApiService {
           .child('${title}_$author.jpg');
       await storageRef.delete();
     } catch (err) {
-
+      return err.toString();
     }
+    return '';
   }
 }

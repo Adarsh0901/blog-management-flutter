@@ -2,8 +2,18 @@ import 'package:blog_management/services/constants.dart';
 import 'package:flutter/material.dart';
 
 class BaseService{
+  void showMessage(context,String msg, Color color) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        showCloseIcon: true,
+        content: Text(msg),
+      ),
+    );
+  }
 
-  void openImagePreview(context, imageUrl, imageOptions method){
+  void openImagePreview(context, imageUrl, ImageOptions method){
     final width = MediaQuery.of(context).size.width;
     showDialog(
       context: context,
@@ -11,7 +21,7 @@ class BaseService{
         return AlertDialog(
           content: SizedBox(
             width: width < 300 ? width*0.8 : 300,
-            child: method == imageOptions.network ? Image.network(
+            child: method == ImageOptions.network ? Image.network(
               imageUrl,
               fit: BoxFit.fill,
             ) : Image.file(imageUrl, fit: BoxFit.fill,),
@@ -42,6 +52,30 @@ class BaseService{
         );
       },
     );
+  }
+
+  Future<DateTime?> openDatePicker(context) async {
+    final now = DateTime.now();
+    final initialDate = DateTime(2001);
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: now,
+        firstDate: initialDate,
+        lastDate: now);
+
+
+    return pickedDate;
+  }
+
+  Future openBottomModalSheet(context, Widget widget)async {
+    return await showModalBottomSheet(
+        useSafeArea: true,
+        showDragHandle: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (ctx) {
+          return widget;
+        });
   }
 
   double calculateRating(List reviews){

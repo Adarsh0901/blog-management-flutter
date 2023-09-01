@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:blog_management/model/blog_model.dart';
 import 'package:blog_management/services/api_services.dart';
 import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
@@ -18,34 +17,22 @@ class CreateBlogScreen extends StatefulWidget {
 class _CreateBlogScreenState extends State<CreateBlogScreen> {
   final _apiService = ApiService();
   final _commonService = CommonServices();
-  final _formKey = GlobalKey<FormState>();
+  final _createFormKey = GlobalKey<FormState>();
   QuillController _controller = QuillController.basic();
-  var _title = '';
-  var _developedBy = '';
-  var _isSaving = false;
+  String _title = '';
+  String _author = '';
   DateTime? _selectedDate;
   File? _selectedImage;
-
-  void _openDatePicker() async {
-    final now = DateTime.now();
-    final initialDate = DateTime(2001);
-    final pickedDate = await showDatePicker(
-        context: context,
-        initialDate: now,
-        firstDate: initialDate,
-        lastDate: now);
-
-    setState(() {
-      _selectedDate = pickedDate;
-    });
-  }
+  bool _isSaving = false;
 
   void _saveItem() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (_createFormKey.currentState!.validate()) {
+      _createFormKey.currentState!.save();
       _selectedDate ??= DateTime.now();
 
       if (_selectedImage == null) {
+        _commonService.showMessage(
+            context, 'Upload Image First', Colors.orange);
         return;
       }
 
@@ -54,39 +41,47 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
       });
 
       try {
-        final imageUrl = await _apiService.uploadImages(_selectedImage!, _title, _developedBy);
+        final imageUrl = await _apiService.uploadImages(
+            _selectedImage!, _title, _author);
         Map data = {
           'title': _title,
           'description': json.encode(_controller.document.toDelta().toJson()),
           'imageUrl': imageUrl,
-          'author': _developedBy,
+          'author': _author,
           'timeStamp': _selectedDate!.toString(),
           'rate': 0.0
         };
         var res = await _apiService.postCall(data, blogs);
         if (res['name'] != null) {
-          _commonService.showMessage(context,
-              'Successfully added blog $_title to the list', Colors.green);
-
           setState(() {
             _isSaving = false;
           });
 
-          Navigator.of(context).pop(Blog(
-              id: res['name'].toString(),
-              title: _title,
-              imageUrl: imageUrl,
-              description: json.encode(_controller.document.toDelta().toJson()),
-              author: _developedBy,
-              timeStamp: _selectedDate!));
+          if(context.mounted){
+            _commonService.showMessage(context,
+                'Successfully added blog $_title to the list', Colors.green);
+
+            Navigator.of(context).pop({'IsAdded': true});
+          }
         }
       } catch (err) {
-        _commonService.showMessage(context, err.toString(), Colors.red);
+        if(context.mounted){
+          _commonService.showMessage(context, err.toString(), Colors.red);
+        }
         setState(() {
           _isSaving = false;
         });
       }
     }
+  }
+
+  void _resetFormField(){
+    _createFormKey.currentState!.reset();
+    setState(() {
+      _selectedDate = null;
+      _controller = QuillController.basic();
+      _selectedImage = null;
+    });
   }
 
   @override
@@ -102,7 +97,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Form(
-              key: _formKey,
+              key: _createFormKey,
               child: Column(
                 children: [
                   UserImagePicker(
@@ -136,19 +131,19 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                     child: TextFormField(
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Developed By',
+                        labelText: 'Author',
                       ),
                       validator: (value) {
                         final pattern = RegExp(r'^[a-zA-Z ]+$');
                         if (value == null || value.isEmpty) {
-                          return 'Developed by must not be empty';
+                          return 'Author name must not be empty';
                         } else if (!pattern.hasMatch(value)) {
-                          return 'Developed by should only be alphabetical';
+                          return 'Author name should only be alphabetical';
                         }
                         return null;
                       },
                       onSaved: (value) {
-                        _developedBy = value!;
+                        _author = value!;
                       },
                     ),
                   ),
@@ -188,7 +183,13 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                             ? 'No Date Selected'
                             : _commonService.formatDate.format(_selectedDate!)),
                         IconButton(
-                          onPressed: _openDatePicker,
+                          onPressed: () async {
+                            var pickedDate =
+                                await _commonService.openDatePicker(context);
+                            setState(() {
+                              _selectedDate = pickedDate;
+                            });
+                          },
                           icon: const Icon(Icons.calendar_month),
                         )
                       ],
@@ -202,23 +203,17 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                         TextButton(
                           onPressed: _isSaving
                               ? null
-                              : () {
-                            _formKey.currentState!.reset();
-                            setState(() {
-                              _selectedDate = null;
-                              _controller = QuillController.basic();
-                            });
-                          },
+                              : _resetFormField,
                           child: const Text('Reset'),
                         ),
                         ElevatedButton(
                           onPressed: _saveItem,
                           child: _isSaving
                               ? const SizedBox(
-                            width: 12,
-                            height: 12,
-                            child: CircularProgressIndicator(),
-                          )
+                                  width: 12,
+                                  height: 12,
+                                  child: CircularProgressIndicator(),
+                                )
                               : const Text('Save'),
                         ),
                       ],

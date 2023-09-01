@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ class UserImagePicker extends StatefulWidget {
 
 class _UserImagePickerState extends State<UserImagePicker> {
   final _commonService = CommonServices();
+  final GlobalKey _menuKey = GlobalKey();
   File? _pickedImage;
 
   List<PopupMenuEntry> _showOptions() {
@@ -49,12 +49,14 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         GestureDetector(
-          onTap: (){
-            if(_pickedImage != null){
-              _commonService.openImagePreview(context, _pickedImage, imageOptions.file);
+          onTap: () {
+            if (_pickedImage != null) {
+              _commonService.openImagePreview(
+                  context, _pickedImage, ImageOptions.file);
             }
           },
           child: CircleAvatar(
@@ -65,10 +67,19 @@ class _UserImagePickerState extends State<UserImagePicker> {
           ),
         ),
         PopupMenuButton(
-            child: TextButton.icon(onPressed: null, icon: Icon(Icons.image), label: Text('Add Image')),
-            itemBuilder: (ctx) {
-              return _showOptions();
-            })
+          key: _menuKey,
+          child: TextButton.icon(
+            onPressed: () {
+              dynamic state = _menuKey.currentState;
+              state.showButtonMenu();
+            },
+            icon: const Icon(Icons.image),
+            label: const Text('Add Image'),
+          ),
+          itemBuilder: (ctx) {
+            return _showOptions();
+          },
+        ),
       ],
     );
   }

@@ -1,6 +1,5 @@
 import 'package:blog_management/model/blog_model.dart';
 import 'package:blog_management/screens/blog_details.dart';
-// import 'package:blog_management/screens/blog_details.dart';
 import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
 import 'package:blog_management/widgets/rating_star.dart';
@@ -20,39 +19,34 @@ class BlogItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final commonService = CommonServices();
-    final GlobalKey tileKey = GlobalKey();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
-        key: tileKey,
         isThreeLine: true,
         onLongPress: () {
-          showModalBottomSheet(
-            enableDrag: true,
-              context: context,
-              builder: (ctx) {
-                return Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(15),
-                          child: Text(
-                            data.title,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ),
-                        const ListTile(
-                          leading: Icon(Icons.favorite_border),
-                          title: Text('Add to Favorite'),
-                        ),
-                      ],
+          Widget widget = Padding(
+            padding: const EdgeInsets.all(15),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Text(
+                      data.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ),
-                );
-              });
+                  const ListTile(
+                    leading: Icon(Icons.favorite_border),
+                    title: Text('Add to Favorite'),
+                  ),
+                ],
+              ),
+            ),
+          );
+          commonService.openBottomModalSheet(context, widget);
         },
         onTap: () async {
           await Navigator.of(context).push(
@@ -69,7 +63,7 @@ class BlogItem extends StatelessWidget {
             onTap: () {
               if (data.imageUrl.trim().isNotEmpty) {
                 commonService.openImagePreview(
-                    context, data.imageUrl, imageOptions.network);
+                    context, data.imageUrl, ImageOptions.network);
               }
             },
             child: CircleAvatar(

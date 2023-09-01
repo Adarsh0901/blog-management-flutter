@@ -15,9 +15,9 @@ class BlogList extends StatefulWidget {
 }
 
 class _BlogListState extends State<BlogList> {
-  late StreamController<List<Blog>> _blogStream;
   final _apiService = ApiService();
   final _commonService = CommonServices();
+  late StreamController<List<Blog>> _blogStream;
   FilterOptions option = FilterOptions.none;
 
   Future<List<Blog>> _getData() async {
@@ -37,7 +37,9 @@ class _BlogListState extends State<BlogList> {
         );
       }
     } catch (err) {
-      print(err);
+      if (context.mounted) {
+        _commonService.showMessage(context, err.toString(), Colors.red);
+      }
     }
     return blogData;
   }
@@ -46,7 +48,7 @@ class _BlogListState extends State<BlogList> {
     _blogStream.add(await _getData());
   }
 
-  List<PopupMenuEntry> _openFilterMenu() {
+  List<PopupMenuEntry> _showFilterMenu() {
     List<PopupMenuEntry> items = [
       PopupMenuItem(
         onTap: () {
@@ -90,11 +92,19 @@ class _BlogListState extends State<BlogList> {
   }
 
   void _removeBlog(Blog data) async {
-    try{
+    try {
       await _apiService.deleteImages(data.title, data.author);
       await _apiService.deleteCall('$blogs/${data.id}');
       _blogStream.add(await _getData());
-    }catch(err){}
+      if (context.mounted) {
+        _commonService.showMessage(
+            context, 'Removed ${data.title} from list', Colors.red);
+      }
+    } catch (err) {
+      if (context.mounted) {
+        _commonService.showMessage(context, err.toString(), Colors.red);
+      }
+    }
   }
 
   @override
@@ -113,16 +123,21 @@ class _BlogListState extends State<BlogList> {
         title: const Text(appTitle),
         actions: [
           PopupMenuButton(
-              icon: const Icon(Icons.filter_alt),
-              itemBuilder: (ctx) {
-                return _openFilterMenu();
-              }),
-          IconButton(onPressed: () async  {
-            final  data = await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CreateBlogScreen()));
-            if(data != null){
-              _initializeData();
-            }
-          }, icon: const Icon(Icons.add))
+            icon: const Icon(Icons.filter_alt),
+            itemBuilder: (ctx) {
+              return _showFilterMenu();
+            },
+          ),
+          IconButton(
+            onPressed: () async {
+              final data = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => const CreateBlogScreen()));
+              if (data != null) {
+                _initializeData();
+              }
+            },
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       drawer: const Drawers(),
@@ -142,7 +157,9 @@ class _BlogListState extends State<BlogList> {
           }
 
           return RefreshIndicator(
-            onRefresh: ()async {_initializeData();},
+            onRefresh: () async {
+              _initializeData();
+            },
             child: ListView.builder(
               padding: const EdgeInsets.all(8),
               itemCount: snapshot.data?.length,
@@ -169,14 +186,20 @@ class _BlogListState extends State<BlogList> {
                       ),
                     ),
                   ),
-                  onDismissed: (direction){
+                  onDismissed: (direction) {
                     _removeBlog(snapshot.data![index]);
                   },
                   confirmDismiss: (DismissDirection direction) async {
-                    return await _commonService.openDialog(context, 'Remove Blog',
+                    return await _commonService.openDialog(
+                        context,
+                        'Remove Blog',
                         'Delete Blog ${snapshot.data![index].title} from list');
                   },
-                  child: BlogItem(data: snapshot.data![index], option: option, getUpdatedData: _applyFilter,),
+                  child: BlogItem(
+                    data: snapshot.data![index],
+                    option: option,
+                    getUpdatedData: _applyFilter,
+                  ),
                 );
               },
             ),

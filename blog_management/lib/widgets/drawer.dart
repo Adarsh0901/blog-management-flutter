@@ -28,19 +28,17 @@ class _DrawersState extends State<Drawers> {
           ListTile(
             onTap: () {
               Navigator.of(context).pop();
-              // Navigator.of(context)
-              //     .pushReplacement(MaterialPageRoute(builder: (ctx) => const BlogList()));
             },
             leading: const Icon(Icons.home),
             title: const Text('Blog Feed'),
           ),
-          ListTile(
-            leading: const Icon(Icons.account_box),
-            title: const Text('Your Blogs'),
+          const ListTile(
+            leading: Icon(Icons.account_box),
+            title: Text('Your Blogs'),
           ),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: const Text('Favorite Blogs'),
+         const  ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text('Favorite Blogs'),
           ),
         ],
       ),
