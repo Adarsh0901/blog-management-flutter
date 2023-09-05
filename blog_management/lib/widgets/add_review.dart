@@ -43,7 +43,7 @@ class _AddReview extends State<AddReview> {
         var response =
             await _apiService.patchCall(reviewData, '$blogs/${widget.id}');
         _updateRating();
-        if (response['rTitle'] != null) {
+        if (response != null) {
           setState(() {
             _isSaving = false;
           });

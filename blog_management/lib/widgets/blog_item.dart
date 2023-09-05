@@ -5,6 +5,8 @@ import 'package:blog_management/services/constants.dart';
 import 'package:blog_management/widgets/rating_star.dart';
 import 'package:flutter/material.dart';
 
+
+// This is Stateless widget used just to show individual blog
 class BlogItem extends StatelessWidget {
   const BlogItem({
     super.key,
@@ -24,6 +26,8 @@ class BlogItem extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
         isThreeLine: true,
+
+        // This method is called to when user long press an individual blog
         onLongPress: () {
           Widget widget = Padding(
             padding: const EdgeInsets.all(15),
@@ -48,6 +52,8 @@ class BlogItem extends StatelessWidget {
           );
           commonService.openBottomModalSheet(context, widget);
         },
+
+        // This method is called and user is redirected to the detail page after user tap on the blog
         onTap: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
@@ -56,10 +62,13 @@ class BlogItem extends StatelessWidget {
           );
           getUpdatedData(option);
         },
+
+        // leading is used to show the image of the blog
         leading: SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
           width: MediaQuery.of(context).size.width * 0.15,
           child: GestureDetector(
+            // This method is used to display the preview of the image once user tap on the image
             onTap: () {
               if (data.imageUrl.trim().isNotEmpty) {
                 commonService.openImagePreview(
@@ -75,7 +84,11 @@ class BlogItem extends StatelessWidget {
             ),
           ),
         ),
+
+        // Title of the Blog
         title: Text(data.title),
+
+        // Subtitle and date of the blog published
         subtitle: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

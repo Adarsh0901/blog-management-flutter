@@ -20,6 +20,7 @@ class _BlogListState extends State<BlogList> {
   late StreamController<List<Blog>> _blogStream;
   FilterOptions option = FilterOptions.none;
 
+  // Function that will return the list of blogs present in the firebase
   Future<List<Blog>> _getData() async {
     List<Blog> blogData = [];
     try {
@@ -44,10 +45,13 @@ class _BlogListState extends State<BlogList> {
     return blogData;
   }
 
+
+  // Storing data into the blog stream in app first launch
   void _initializeData() async {
     _blogStream.add(await _getData());
   }
 
+  // Function that will return the list of filter menus
   List<PopupMenuEntry> _showFilterMenu() {
     List<PopupMenuEntry> items = [
       PopupMenuItem(
@@ -79,6 +83,7 @@ class _BlogListState extends State<BlogList> {
     return items;
   }
 
+  // Function to sort blog list based on filter option selected
   void _applyFilter(FilterOptions option) async {
     List<Blog> data = await _getData();
     if (option == FilterOptions.ascending) {
@@ -91,6 +96,7 @@ class _BlogListState extends State<BlogList> {
     _blogStream.add(data);
   }
 
+  // Function to delete the blog from the firebase
   void _removeBlog(Blog data) async {
     try {
       await _apiService.deleteImages(data.title, data.author);
@@ -122,12 +128,15 @@ class _BlogListState extends State<BlogList> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         title: const Text(appTitle),
         actions: [
+          // Filter button
           PopupMenuButton(
             icon: const Icon(Icons.filter_alt),
             itemBuilder: (ctx) {
               return _showFilterMenu();
             },
           ),
+
+          // Add blog button
           IconButton(
             onPressed: () async {
               final data = await Navigator.of(context).push(MaterialPageRoute(
@@ -140,22 +149,30 @@ class _BlogListState extends State<BlogList> {
           ),
         ],
       ),
+
+      // Custom drawer
       drawer: const Drawers(),
+
+      // Stream builder to display the list of streams
       body: StreamBuilder(
         stream: _blogStream.stream,
         builder: (context, snapshot) {
+          // A loader will be shown if connection state is in waiting
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
+          // This message will be shown if no data found
           if (!snapshot.hasData) {
             return const Center(child: Text('No Blogs Found'));
           }
 
+          // This message will be shown if some error is caught
           if (snapshot.hasError) {
             return const Center(child: Text('Something Went Wrong'));
           }
 
+          // if none of the above condition matched then the list of blog is shown by using listView builder
           return RefreshIndicator(
             onRefresh: () async {
               _initializeData();
@@ -166,6 +183,7 @@ class _BlogListState extends State<BlogList> {
               itemBuilder: (ctx, index) {
                 return Dismissible(
                   key: Key('item ${snapshot.data![index]}'),
+                  // A red background color with msg is shown when blog is slide in any direction
                   background: Container(
                     color: Colors.red,
                     child: const Padding(
@@ -186,15 +204,21 @@ class _BlogListState extends State<BlogList> {
                       ),
                     ),
                   ),
+
+                  // This method is called after blog is dismissed
                   onDismissed: (direction) {
                     _removeBlog(snapshot.data![index]);
                   },
+
+                  // A confirmation msg is shown after blog is slide in any direction
                   confirmDismiss: (DismissDirection direction) async {
                     return await _commonService.openDialog(
                         context,
                         'Remove Blog',
                         'Delete Blog ${snapshot.data![index].title} from list');
                   },
+
+                  // Custom widget is called in which we pass data of individual blog, selected options and a function to apply filter once option is changed
                   child: BlogItem(
                     data: snapshot.data![index],
                     option: option,

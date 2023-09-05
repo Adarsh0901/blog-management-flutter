@@ -25,6 +25,7 @@ class _BlogDetailsState extends State<BlogDetails> {
   Blog? _blogDetail;
   QuillController _controller = QuillController.basic();
 
+  // This function is used to load data of single blog once app is redirected to this screen
   void _loadData() async {
     try {
       Map response = await _apiService.getCall('$blogs/${widget.id}');
@@ -59,6 +60,7 @@ class _BlogDetailsState extends State<BlogDetails> {
 
   @override
   Widget build(BuildContext context) {
+    // A loader is shown until data is loaded from firebase
     Widget content = const Center(
       child: CircularProgressIndicator(),
     );
@@ -76,6 +78,7 @@ class _BlogDetailsState extends State<BlogDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // To show the title of the blog
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
@@ -89,6 +92,8 @@ class _BlogDetailsState extends State<BlogDetails> {
                   const SizedBox(
                     height: 20,
                   ),
+
+                  // To show the Image of the image
                   SizedBox(
                     height: 200,
                     child: Center(
@@ -99,6 +104,8 @@ class _BlogDetailsState extends State<BlogDetails> {
                   const SizedBox(
                     height: 20,
                   ),
+
+                  // To show the description of the blog in QuillEditor readonly mode
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: QuillEditor.basic(
@@ -110,6 +117,8 @@ class _BlogDetailsState extends State<BlogDetails> {
                   const SizedBox(
                     height: 20,
                   ),
+
+                  // To show the author of the blog
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -119,6 +128,8 @@ class _BlogDetailsState extends State<BlogDetails> {
                       ],
                     ),
                   ),
+
+                  // To show the published date of the blog
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -130,6 +141,8 @@ class _BlogDetailsState extends State<BlogDetails> {
                       ],
                     ),
                   ),
+
+                  // To show the rating of the Blog making use of custom Rating widget
                   Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Rating(
@@ -144,6 +157,8 @@ class _BlogDetailsState extends State<BlogDetails> {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
+
+                  // Button to add comments to the blog
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Align(
@@ -163,55 +178,58 @@ class _BlogDetailsState extends State<BlogDetails> {
                       ),
                     ),
                   ),
-                  if (_blogDetail!.reviews != null)
+
+                  // List of comments is shown when blog has comments
+                  if (_blogDetail!.reviews != null)...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _blogDetail!.reviews!.length,
-                          itemBuilder: (ctx, index) {
-                            return ListTile(
-                              isThreeLine: true,
-                              leading: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.13,
-                                width: MediaQuery.of(context).size.width * 0.13,
-                                child: CircleAvatar(
-                                  radius: 40,
-                                  child: Text(_blogDetail!.reviews![index]
-                                      ['rTitle'][0]),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _blogDetail!.reviews!.length,
+                        itemBuilder: (ctx, index) {
+                          return ListTile(
+                            isThreeLine: true,
+                            leading: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.13,
+                              width: MediaQuery.of(context).size.width * 0.13,
+                              child: CircleAvatar(
+                                radius: 40,
+                                child: Text(
+                                    _blogDetail!.reviews![index]['rTitle'][0]),
+                              ),
+                            ),
+                            title: Text(
+                              _blogDetail!.reviews![index]['rTitle'],
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(_blogDetail!.reviews![index]
+                                    ['rDescription']),
+                                const SizedBox(
+                                  height: 8,
                                 ),
-                              ),
-                              title: Text(
-                                _blogDetail!.reviews![index]['rTitle'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(_blogDetail!.reviews![index]
-                                      ['rDescription']),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(_commonService.formatDate.format(
-                                      DateTime.parse(_blogDetail!
-                                          .reviews![index]['rTimeStamp']))),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Rating(
-                                    isDisable: true,
-                                    rating: _blogDetail!.reviews![index]
-                                        ['rating'],
-                                  )
-                                ],
-                              ),
-                            );
-                          }),
+                                Text(_commonService.formatDate.format(
+                                    DateTime.parse(_blogDetail!.reviews![index]
+                                        ['rTimeStamp']))),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Rating(
+                                  isDisable: true,
+                                  rating: _blogDetail!.reviews![index]
+                                      ['rating'],
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
+                  ]
                 ],
               ),
             ),

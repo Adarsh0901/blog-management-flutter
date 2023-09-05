@@ -25,6 +25,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
   File? _selectedImage;
   bool _isSaving = false;
 
+  // Function to save item to the firebase
   void _saveItem() async {
     if (_createFormKey.currentState!.validate()) {
       _createFormKey.currentState!.save();
@@ -52,7 +53,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
           'rate': 0.0
         };
         var res = await _apiService.postCall(data, blogs);
-        if (res['name'] != null) {
+        if (res != null) {
           setState(() {
             _isSaving = false;
           });
@@ -75,6 +76,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
     }
   }
 
+  // Function to reset form Fields
   void _resetFormField(){
     _createFormKey.currentState!.reset();
     setState(() {
