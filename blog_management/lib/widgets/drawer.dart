@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Drawers extends StatefulWidget {
@@ -10,6 +11,11 @@ class Drawers extends StatefulWidget {
 }
 
 class _DrawersState extends State<Drawers> {
+  late final userDetail;
+  @override
+  void initState() {
+    userDetail = FirebaseAuth.instance.currentUser;
+  }
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -20,9 +26,9 @@ class _DrawersState extends State<Drawers> {
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
             ),
-            child: const UserAccountsDrawerHeader(
-              accountName: Text('Adarsh Shukla'),
-              accountEmail: Text('adarsh@merce.co'),
+            child: UserAccountsDrawerHeader(
+              accountName: const Text('Adarsh Shukla'),
+              accountEmail: Text(userDetail.email),
             ),
           ),
           ListTile(
@@ -39,6 +45,13 @@ class _DrawersState extends State<Drawers> {
          const  ListTile(
             leading: Icon(Icons.favorite),
             title: Text('Favorite Blogs'),
+          ),
+          ListTile(
+            onTap: (){
+              FirebaseAuth.instance.signOut();
+            },
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout user'),
           ),
         ],
       ),
