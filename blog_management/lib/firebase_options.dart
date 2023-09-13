@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +43,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyD5OjksCu-hcEd-vlv7XcbjpxGzi-_JkPM',
+    appId: '1:464466109983:web:3350f038baa5358582572a',
+    messagingSenderId: '464466109983',
+    projectId: 'blog-management-flutter',
+    authDomain: 'blog-management-flutter.firebaseapp.com',
+    databaseURL: 'https://blog-management-flutter-default-rtdb.firebaseio.com',
+    storageBucket: 'blog-management-flutter.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBtW7mDKAPmuhXoD_mnBy2eStlmBgzUuQo',
     appId: '1:464466109983:android:ee33dedf9003f02882572a',
@@ -60,12 +64,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDf_Byiqx-tkAEKlvKuKQFEM_5QZUwhJyo',
-    appId: '1:464466109983:ios:20b410b7073f5c4c82572a',
+    appId: '1:464466109983:ios:d65f670e710d9b6b82572a',
     messagingSenderId: '464466109983',
     projectId: 'blog-management-flutter',
     databaseURL: 'https://blog-management-flutter-default-rtdb.firebaseio.com',
     storageBucket: 'blog-management-flutter.appspot.com',
-    iosClientId: '464466109983-u97n4u6kni9ncjbbqb828ov8mlvmfjk5.apps.googleusercontent.com',
-    iosBundleId: 'com.example.blogManagement',
+    iosBundleId: 'com.example.blogManagement1',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDf_Byiqx-tkAEKlvKuKQFEM_5QZUwhJyo',
+    appId: '1:464466109983:ios:50d06e69c5ce48e482572a',
+    messagingSenderId: '464466109983',
+    projectId: 'blog-management-flutter',
+    databaseURL: 'https://blog-management-flutter-default-rtdb.firebaseio.com',
+    storageBucket: 'blog-management-flutter.appspot.com',
+    iosBundleId: 'com.example.blogManagement.RunnerTests',
   );
 }

@@ -42,6 +42,7 @@ class _LoginScreen extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
@@ -50,81 +51,84 @@ class _LoginScreen extends State<LoginScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Card(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      key: _loginForm,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Text(_isLogin ?
-                              'Login Form' : 'Signup Form',
-                              style: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: TextFormField(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Email ID',
+              SizedBox(
+                width: width > 390 ? 390 : width,
+                child: Card(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: _loginForm,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Text(_isLogin ?
+                                'Login Form' : 'Signup Form',
+                                style: const TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              autocorrect: false,
-                              textCapitalization: TextCapitalization.none,
-                              validator: (value){
-                                if(value == null || value.trim().isEmpty || !value.contains('@')){
-                                  return 'Enter a valid Email Address';
-                                }
-                                return null;
-                              },
-                              onSaved: (value){
-                                _emailId = value!;
-                              },
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: TextFormField(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Password',
+                            Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Email ID',
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                autocorrect: false,
+                                textCapitalization: TextCapitalization.none,
+                                validator: (value){
+                                  if(value == null || value.trim().isEmpty || !value.contains('@')){
+                                    return 'Enter a valid Email Address';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value){
+                                  _emailId = value!;
+                                },
                               ),
-                              obscureText: true,
-                              validator: (value){
-                                if(value == null || value.trim().isEmpty){
-                                  return 'Password should not be empty';
-                                }
-                                return null;
-                              },
-                              onSaved: (value){
-                                _password = value!;
-                              },
                             ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          ElevatedButton(
-                            onPressed: _login,
-                            child: Text(_isLogin ? 'Login' : 'Signup'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(_isLogin
-                                ? 'Create an account'
-                                : 'I already have an account'),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Password',
+                                ),
+                                obscureText: true,
+                                validator: (value){
+                                  if(value == null || value.trim().isEmpty){
+                                    return 'Password should not be empty';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value){
+                                  _password = value!;
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            ElevatedButton(
+                              onPressed: _login,
+                              child: Text(_isLogin ? 'Login' : 'Signup'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+                              child: Text(_isLogin
+                                  ? 'Create an account'
+                                  : 'I already have an account'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -42,8 +42,8 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
       });
 
       try {
-        final imageUrl = await _apiService.uploadImages(
-            _selectedImage!, _title, _author);
+        final imageUrl =
+            await _apiService.uploadImages(_selectedImage!, _title, _author);
         Map data = {
           'title': _title,
           'description': json.encode(_controller.document.toDelta().toJson()),
@@ -58,7 +58,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
             _isSaving = false;
           });
 
-          if(context.mounted){
+          if (context.mounted) {
             _commonService.showMessage(context,
                 'Successfully added blog $_title to the list', Colors.green);
 
@@ -66,7 +66,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
           }
         }
       } catch (err) {
-        if(context.mounted){
+        if (context.mounted) {
           _commonService.showMessage(context, err.toString(), Colors.red);
         }
         setState(() {
@@ -77,7 +77,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
   }
 
   // Function to reset form Fields
-  void _resetFormField(){
+  void _resetFormField() {
     _createFormKey.currentState!.reset();
     setState(() {
       _selectedDate = null;
@@ -153,10 +153,20 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                     padding: const EdgeInsets.all(15),
                     child: Column(
                       children: [
-                        QuillToolbar.basic(
-                          controller: _controller,
-                          showAlignmentButtons: true,
-                          showSearchButton: false,
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                            ),
+                          ),
+                          child: QuillToolbar.basic(
+                            controller: _controller,
+                            showAlignmentButtons: true,
+                            showSearchButton: false,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
                         ),
                         Container(
                           height: 150,
@@ -203,9 +213,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: _isSaving
-                              ? null
-                              : _resetFormField,
+                          onPressed: _isSaving ? null : _resetFormField,
                           child: const Text('Reset'),
                         ),
                         ElevatedButton(
