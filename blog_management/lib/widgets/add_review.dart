@@ -24,6 +24,7 @@ class _AddReview extends State<AddReview> {
   double _rate = 0.0;
   bool _isSaving = false;
 
+  // Function add review and average rate into firebase
   void _saveItem() async {
     if (_reviewFormKey.currentState!.validate()) {
       _reviewFormKey.currentState!.save();
@@ -42,6 +43,7 @@ class _AddReview extends State<AddReview> {
         Map reviewData = {'reviews': widget.reviews};
         var response =
             await _apiService.patchCall(reviewData, '$blogs/${widget.id}');
+        //Method is called here to calculate and add average rate into firebase
         _updateRating();
         if (response != null) {
           setState(() {
@@ -54,6 +56,9 @@ class _AddReview extends State<AddReview> {
           }
         }
       } catch (err) {
+        if(context.mounted){
+          _commonService.showMessage(context, err.toString(), Colors.red);
+        }
         setState(() {
           _isSaving = false;
         });
@@ -61,6 +66,7 @@ class _AddReview extends State<AddReview> {
     }
   }
 
+  //Function to update average rate into firebase
   void _updateRating() async {
     try {
       double averageRating = _commonService.calculateRating(widget.reviews);
@@ -73,6 +79,7 @@ class _AddReview extends State<AddReview> {
     }
   }
 
+  //Function to reset fields
   void _resetFields() {
     _reviewFormKey.currentState!.reset();
     setState(() {

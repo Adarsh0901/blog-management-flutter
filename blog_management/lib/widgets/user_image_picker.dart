@@ -16,6 +16,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
   final GlobalKey _menuKey = GlobalKey();
   File? _pickedImage;
 
+  //Function to return list of option for user to select
   List<PopupMenuEntry> _showOptions() {
     List<PopupMenuEntry> item = [
       PopupMenuItem(
@@ -35,6 +36,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
     return item;
   }
 
+  //Image picker method
   void _pickImage(ImageSource source) async {
     final pickedImage = await ImagePicker()
         .pickImage(source: source, imageQuality: 50, maxWidth: 150);

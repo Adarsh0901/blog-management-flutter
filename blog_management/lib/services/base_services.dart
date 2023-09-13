@@ -2,6 +2,7 @@ import 'package:blog_management/services/constants.dart';
 import 'package:flutter/material.dart';
 
 class BaseService{
+  // Function to show Success/Failure Msg
   void showMessage(context,String msg, Color color) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -13,6 +14,7 @@ class BaseService{
     );
   }
 
+  // Function to open Image preview
   void openImagePreview(context, imageUrl, ImageOptions method){
     final width = MediaQuery.of(context).size.width;
     showDialog(
@@ -33,6 +35,7 @@ class BaseService{
     );
   }
 
+  //Function to open confirmation dialog
   Future openDialog(context, String title, String content) async {
     return showDialog(
       context: context,
@@ -54,6 +57,7 @@ class BaseService{
     );
   }
 
+  //Function to open Date picker
   Future<DateTime?> openDatePicker(context) async {
     final now = DateTime.now();
     final initialDate = DateTime(2001);
@@ -67,6 +71,7 @@ class BaseService{
     return pickedDate;
   }
 
+  // Function to open bottom Modal and show content sent in widget parameter
   Future openBottomModalSheet(context, Widget widget)async {
     return await showModalBottomSheet(
         useSafeArea: true,
@@ -78,6 +83,7 @@ class BaseService{
         });
   }
 
+  //Function to calculate average rate from list of reviews
   double calculateRating(List reviews){
     double rate = 0.0;
     for(var i=0;i<reviews.length;i++){

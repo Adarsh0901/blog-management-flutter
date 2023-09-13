@@ -13,6 +13,8 @@ class Rating extends StatelessWidget {
     Icon icon;
     final width = MediaQuery.of(context).size.width;
     double size1 = 16;
+
+    //Deciding size of star based on screen size
     if(width<=390){
       size1 = 18;
     }else if(width < 420 && width >390 ){
@@ -20,6 +22,8 @@ class Rating extends StatelessWidget {
     }else{
       size1 = 26;
     }
+
+    //Display single unbordered star
     if (index >= rating) {
       icon = Icon(
         Icons.star_border,
@@ -27,13 +31,16 @@ class Rating extends StatelessWidget {
         color: Theme.of(context).colorScheme.onBackground,
       );
     }
+    //Display half border star
     else if (index > rating - 1 && index < rating) {
       icon = Icon(
         Icons.star_half,
         size: size ?? size1,
         color: Theme.of(context).colorScheme.onBackground,
       );
-    } else {
+    }
+    //Display full star
+    else {
       icon = Icon(
         Icons.star,
         size: size ?? size1,

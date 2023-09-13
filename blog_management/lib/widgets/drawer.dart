@@ -14,6 +14,7 @@ class _DrawersState extends State<Drawers> {
   late final userDetail;
   @override
   void initState() {
+    super.initState();
     userDetail = FirebaseAuth.instance.currentUser;
   }
   @override

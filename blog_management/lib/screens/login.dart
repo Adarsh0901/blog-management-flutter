@@ -29,9 +29,9 @@ class _LoginScreen extends State<LoginScreen> {
     _loginForm.currentState!.save();
     try{
       if(_isLogin){
-        final userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: _emailId, password: _password);
+        await _firebaseAuth.signInWithEmailAndPassword(email: _emailId, password: _password);
       }else{
-        final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: _emailId, password: _password);
+        await _firebaseAuth.createUserWithEmailAndPassword(email: _emailId, password: _password);
       }
     }catch(err){
       if(context.mounted){
