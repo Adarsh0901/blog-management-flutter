@@ -1,4 +1,23 @@
 {
+  "loginHeading": "लॉगिन फॉर्म",
+  "signupHeading": "साइनअप फॉर्म",
+  "loginButton": "लॉग इन करें",
+  "signUpButton": "साइन अप करें",
+  "createAnAccount": "खाता बनाएं",
+  "alreadyHaveAnAccount": "क्या आपके पास पहले से एक खाता मौजूद है",
+  "emailId": "ईमेल आईडी",
+  "password": "पासवर्ड",
   "appTitle": "ब्लॉग मैनेजमेंट",
-  "addNewBlog": "एक नया ब्लॉग जोड़ें"
+  "addNewBlog": "एक नया ब्लॉग जोड़ें",
+  "blogFeed": "ब्लॉग फ़ीड",
+  "postedBy": "पोस्टेड बाई : ",
+  "postedOn": "पोस्टेड ओन : ",
+  "commentsHeading": "टिप्पणियाँ",
+  "addComments": "टिप्पणी करें",
+  "addReviewHeading": "समीक्षा जोड़ें",
+  "nameField": "नाम",
+  "reviewField": "समीक्षा",
+  "addButton": "जोड़ना",
+  "resetButton": "रीसेट",
+  "logout": "उपयोगकर्ता को लॉगआउट करें"
 }

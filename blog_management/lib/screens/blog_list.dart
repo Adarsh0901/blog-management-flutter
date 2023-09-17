@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:blog_management/main.dart';
 import 'package:blog_management/model/blog_model.dart';
 import 'package:blog_management/screens/create_blog.dart';
 import 'package:blog_management/services/api_services.dart';
@@ -129,38 +128,29 @@ class _BlogListState extends State<BlogList> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         title: Text(AppLocalizations.of(context)!.appTitle),
         actions: [
-          DropdownButton(
-            underline: const SizedBox(),
-            items: const [
-              DropdownMenuItem(value: 'en',child: Text('EN')),
-              DropdownMenuItem(value: 'hi',child: Text('HI')),
-            ],
-            onChanged: (value) {
-              if(value != null){
-                MyApp.setLocale(context, Locale(value));
-              }
-            },
-            icon: Icon(Icons.language,color: Theme.of(context).colorScheme.onPrimary,),
-          ),
+          _commonService.dropdownButton(context),
           // Filter button
-          PopupMenuButton(
-            icon: const Icon(Icons.filter_alt),
-            itemBuilder: (ctx) {
-              return _showFilterMenu();
-            },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PopupMenuButton(
+              icon: const Icon(Icons.filter_alt),
+              itemBuilder: (ctx) {
+                return _showFilterMenu();
+              },
+            ),
           ),
 
           // Add blog button
-          IconButton(
-            onPressed: () async {
-              final data = await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const CreateBlogScreen()));
-              if (data != null) {
-                _initializeData();
-              }
-            },
-            icon: const Icon(Icons.add),
-          ),
+          // IconButton(
+          //   onPressed: () async {
+          //     final data = await Navigator.of(context).push(MaterialPageRoute(
+          //         builder: (ctx) => const CreateBlogScreen()));
+          //     if (data != null) {
+          //       _initializeData();
+          //     }
+          //   },
+          //   icon: const Icon(Icons.add),
+          // ),
         ],
       ),
 

@@ -1,4 +1,23 @@
 {
+  "loginHeading": "Login Form",
+  "signupHeading": "Signup Form",
+  "loginButton": "Login",
+  "signUpButton": "Signup",
+  "createAnAccount": "Create an Account",
+  "alreadyHaveAnAccount": "Already have an account",
+  "emailId": "Email ID",
+  "password": "Password",
   "appTitle": "Blog Management",
-  "addNewBlog": "Add a new blog"
+  "addNewBlog": "Add a new blog",
+  "blogFeed": "Blog Feed",
+  "postedBy": "Posted By : ",
+  "postedOn": "Posted on : ",
+  "commentsHeading": "Comments",
+  "addComments": "Add Comments",
+  "addReviewHeading": "Add Review",
+  "nameField": "Name",
+  "reviewField": "Review",
+  "addButton": "Add",
+  "resetButton": "Reset",
+  "logout": "Logout User"
 }

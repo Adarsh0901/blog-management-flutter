@@ -3,6 +3,7 @@ import 'package:blog_management/services/common_services.dart';
 import 'package:blog_management/services/constants.dart';
 import 'package:blog_management/widgets/rating_star.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddReview extends StatefulWidget {
   const AddReview({super.key, required this.id, required this.reviews});
@@ -100,26 +101,23 @@ class _AddReview extends State<AddReview> {
           key: _reviewFormKey,
           child: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.all(15),
+              Padding(
+                padding: const EdgeInsets.all(15),
                 child: Text(
-                  'Add Review',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  AppLocalizations.of(context)!.addReviewHeading,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Name',
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: AppLocalizations.of(context)!.nameField,
                   ),
                   validator: (value) {
-                    final pattern = RegExp(r'^[a-zA-Z ]+$');
                     if (value == null || value.isEmpty) {
                       return 'Name must not be empty';
-                    } else if (!pattern.hasMatch(value)) {
-                      return 'Name should only be alphabetical';
                     }
                     return null;
                   },
@@ -131,9 +129,9 @@ class _AddReview extends State<AddReview> {
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Review',
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: AppLocalizations.of(context)!.reviewField,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -166,7 +164,7 @@ class _AddReview extends State<AddReview> {
                   children: [
                     TextButton(
                       onPressed: _isSaving ? null : _resetFields,
-                      child: const Text('Reset'),
+                      child: Text(AppLocalizations.of(context)!.resetButton),
                     ),
                     ElevatedButton(
                       onPressed: _saveItem,
@@ -176,7 +174,7 @@ class _AddReview extends State<AddReview> {
                               height: 12,
                               child: CircularProgressIndicator(),
                             )
-                          : const Text('Add'),
+                          : Text(AppLocalizations.of(context)!.addButton),
                     ),
                   ],
                 ),

@@ -1,6 +1,7 @@
 import 'package:blog_management/services/common_services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 
@@ -22,19 +23,19 @@ class _LoginScreen extends State<LoginScreen> {
 
   _login() async {
     var isValid = _loginForm.currentState!.validate();
-    if(!isValid){
-
-    }
+    if (!isValid) {}
 
     _loginForm.currentState!.save();
-    try{
-      if(_isLogin){
-        await _firebaseAuth.signInWithEmailAndPassword(email: _emailId, password: _password);
-      }else{
-        await _firebaseAuth.createUserWithEmailAndPassword(email: _emailId, password: _password);
+    try {
+      if (_isLogin) {
+        await _firebaseAuth.signInWithEmailAndPassword(
+            email: _emailId, password: _password);
+      } else {
+        await _firebaseAuth.createUserWithEmailAndPassword(
+            email: _emailId, password: _password);
       }
-    }catch(err){
-      if(context.mounted){
+    } catch (err) {
+      if (context.mounted) {
         _commonService.showMessage(context, err.toString(), Colors.red);
       }
     }
@@ -44,17 +45,21 @@ class _LoginScreen extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        actions: [_commonService.dropdownButton(context)],
+      ),
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: width > 390 ? 390 : width,
-                child: Card(
-                  child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: width > 390 ? 390 : width,
+                  child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Form(
@@ -64,8 +69,11 @@ class _LoginScreen extends State<LoginScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(15),
-                              child: Text(_isLogin ?
-                                'Login Form' : 'Signup Form',
+                              child: Text(
+                                _isLogin
+                                    ? AppLocalizations.of(context)!.loginHeading
+                                    : AppLocalizations.of(context)!
+                                        .signupHeading,
                                 style: const TextStyle(
                                     fontSize: 30, fontWeight: FontWeight.bold),
                               ),
@@ -73,20 +81,23 @@ class _LoginScreen extends State<LoginScreen> {
                             Padding(
                               padding: const EdgeInsets.all(15),
                               child: TextFormField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Email ID',
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  labelText:
+                                      AppLocalizations.of(context)!.emailId,
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 autocorrect: false,
                                 textCapitalization: TextCapitalization.none,
-                                validator: (value){
-                                  if(value == null || value.trim().isEmpty || !value.contains('@')){
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().isEmpty ||
+                                      !value.contains('@')) {
                                     return 'Enter a valid Email Address';
                                   }
                                   return null;
                                 },
-                                onSaved: (value){
+                                onSaved: (value) {
                                   _emailId = value!;
                                 },
                               ),
@@ -94,18 +105,19 @@ class _LoginScreen extends State<LoginScreen> {
                             Padding(
                               padding: const EdgeInsets.all(15),
                               child: TextFormField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Password',
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  labelText:
+                                      AppLocalizations.of(context)!.password,
                                 ),
                                 obscureText: true,
-                                validator: (value){
-                                  if(value == null || value.trim().isEmpty){
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
                                     return 'Password should not be empty';
                                   }
                                   return null;
                                 },
-                                onSaved: (value){
+                                onSaved: (value) {
                                   _password = value!;
                                 },
                               ),
@@ -115,7 +127,9 @@ class _LoginScreen extends State<LoginScreen> {
                             ),
                             ElevatedButton(
                               onPressed: _login,
-                              child: Text(_isLogin ? 'Login' : 'Signup'),
+                              child: Text(_isLogin
+                                  ? AppLocalizations.of(context)!.loginButton
+                                  : AppLocalizations.of(context)!.signUpButton),
                             ),
                             TextButton(
                               onPressed: () {
@@ -124,8 +138,10 @@ class _LoginScreen extends State<LoginScreen> {
                                 });
                               },
                               child: Text(_isLogin
-                                  ? 'Create an account'
-                                  : 'I already have an account'),
+                                  ? AppLocalizations.of(context)!
+                                      .createAnAccount
+                                  : AppLocalizations.of(context)!
+                                      .alreadyHaveAnAccount),
                             ),
                           ],
                         ),
@@ -133,8 +149,8 @@ class _LoginScreen extends State<LoginScreen> {
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:blog_management/widgets/add_review.dart';
 import 'package:blog_management/widgets/rating_star.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BlogDetails extends StatefulWidget {
   const BlogDetails({super.key, required this.id, required this.title});
@@ -123,7 +124,7 @@ class _BlogDetailsState extends State<BlogDetails> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        const Text('Posted By: '),
+                        Text(AppLocalizations.of(context)!.postedBy),
                         Expanded(child: Text(_blogDetail!.author)),
                       ],
                     ),
@@ -134,7 +135,7 @@ class _BlogDetailsState extends State<BlogDetails> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        const Text('Posted on: '),
+                        Text(AppLocalizations.of(context)!.postedOn),
                         Expanded(
                             child: Text(_commonService.formatDate
                                 .format(_blogDetail!.timeStamp))),
@@ -149,12 +150,12 @@ class _BlogDetailsState extends State<BlogDetails> {
                         isDisable: true,
                         rating: _blogDetail!.rate,
                       )),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
+                   Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Comments:',
+                      AppLocalizations.of(context)!.commentsHeading,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
 
@@ -174,7 +175,7 @@ class _BlogDetailsState extends State<BlogDetails> {
                           _loadData();
                         },
                         icon: const Icon(Icons.add),
-                        label: const Text('Add Comments'),
+                        label: Text(AppLocalizations.of(context)!.addComments),
                       ),
                     ),
                   ),

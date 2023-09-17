@@ -1,5 +1,7 @@
+import 'package:blog_management/screens/create_blog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Drawers extends StatefulWidget {
   const Drawers({super.key});
@@ -37,22 +39,23 @@ class _DrawersState extends State<Drawers> {
               Navigator.of(context).pop();
             },
             leading: const Icon(Icons.home),
-            title: const Text('Blog Feed'),
+            title: Text(AppLocalizations.of(context)!.blogFeed),
           ),
-          const ListTile(
-            leading: Icon(Icons.account_box),
-            title: Text('Your Blogs'),
-          ),
-         const  ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text('Favorite Blogs'),
+          ListTile(
+            onTap: (){
+              Navigator.of(context).pop();
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => const CreateBlogScreen()));
+            },
+            leading: const Icon(Icons.add),
+            title: Text(AppLocalizations.of(context)!.addNewBlog),
           ),
           ListTile(
             onTap: (){
               FirebaseAuth.instance.signOut();
             },
             leading: const Icon(Icons.logout),
-            title: const Text('Logout user'),
+            title: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),
