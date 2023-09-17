@@ -6,6 +6,7 @@ import 'package:blog_management/services/constants.dart';
 import 'package:blog_management/widgets/user_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreateBlogScreen extends StatefulWidget {
   const CreateBlogScreen({super.key});
@@ -92,7 +93,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: const Text('Add a new blog'),
+        title: Text(AppLocalizations.of(context)!.addNewBlog),
       ),
       body: SingleChildScrollView(
         child: SafeArea(

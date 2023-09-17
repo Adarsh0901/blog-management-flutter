@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:blog_management/main.dart';
 import 'package:blog_management/model/blog_model.dart';
 import 'package:blog_management/screens/create_blog.dart';
 import 'package:blog_management/services/api_services.dart';
@@ -7,6 +8,7 @@ import 'package:blog_management/services/constants.dart';
 import 'package:blog_management/widgets/blog_item.dart';
 import 'package:blog_management/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BlogList extends StatefulWidget {
   const BlogList({super.key});
@@ -44,7 +46,6 @@ class _BlogListState extends State<BlogList> {
     }
     return blogData;
   }
-
 
   // Storing data into the blog stream in app first launch
   void _initializeData() async {
@@ -126,8 +127,21 @@ class _BlogListState extends State<BlogList> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: const Text(appTitle),
+        title: Text(AppLocalizations.of(context)!.appTitle),
         actions: [
+          DropdownButton(
+            underline: const SizedBox(),
+            items: const [
+              DropdownMenuItem(value: 'en',child: Text('EN')),
+              DropdownMenuItem(value: 'hi',child: Text('HI')),
+            ],
+            onChanged: (value) {
+              if(value != null){
+                MyApp.setLocale(context, Locale(value));
+              }
+            },
+            icon: Icon(Icons.language,color: Theme.of(context).colorScheme.onPrimary,),
+          ),
           // Filter button
           PopupMenuButton(
             icon: const Icon(Icons.filter_alt),
